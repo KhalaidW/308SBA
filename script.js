@@ -78,10 +78,11 @@ const LearnerSubmissions = [
 
 function getLearnerData(course, ag, submissions) {
   // here, we would process this data to achieve the desired result.
-  const learnerIds = [...new Set(
-    submissions.map(s => s.learner_id)
-  )];
-  console.log(learnerIds)
+try {
+
+} catch (error) {
+  console.error(`❌ Error: ${err.message}`);
+}
   // return result;
 }
 
