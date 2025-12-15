@@ -80,6 +80,18 @@ function getLearnerData(course, ag, submissions) {
   // here, we would process this data to achieve the desired result.
 try {
 
+  const processedLearners = {}
+
+  for (const submission of submissions) {
+      const learnerId = submission.learner_id;
+
+      // Skip if learner already processed
+      if (processedLearners[learnerId]) continue; 
+
+      let totalScore = 0;        
+      let totalPossible = 0;     
+      const assignmentDetails = [];
+
 } catch (error) {
   console.error(`❌ Error: ${err.message}`);
 }
