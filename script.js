@@ -76,25 +76,81 @@ const LearnerSubmissions = [
   }
 ];
 
+function isAssignmentDue(dueDateString) {
+  const today = new Date();
+  const dueDate = new Date(dueDateString);
+  return dueDate <= today;
+}
+
 function getLearnerData(course, ag, submissions) {
   // here, we would process this data to achieve the desired result.
-try {
+  try {
 
-  const processedLearners = {}
+    const results = [];
+    const processedLearners = {}
 
-  for (const submission of submissions) {
+    for (const submission of submissions) {
       const learnerId = submission.learner_id;
 
       // Skip if learner already processed
-      if (processedLearners[learnerId]) continue; 
+      if (processedLearners[learnerId]) continue;
 
-      let totalScore = 0;        
-      let totalPossible = 0;     
+      let totalScore = 0;
+      let totalPossible = 0;
       const assignmentDetails = [];
 
-} catch (error) {
-  console.error(`❌ Error: ${err.message}`);
-}
+      for (let i = 0; i < submissions.length; i++) {
+        const current = submissions[i];
+
+        if (current.learner_id !== learnerId) {
+          continue;
+        }
+        const assignment = ag.assignments.find(
+          a => a.id === current.assignment_id
+        );
+
+        if (!assignment) {
+          break;
+        }
+
+        if (!isAssignmentDue(assignment.due_at)) {
+          continue;
+        } else {
+          const score = current.submission.score;
+          const possible = assignment.points_possible;
+
+          totalScore += score;
+          totalPossible += possible;
+
+          assignmentDetails.push({
+            assignmentId: assignment.id,
+            name: assignment.name,
+            score: score,
+            pointsPossible: possible
+          });
+        }
+      }
+      const average =
+        totalPossible > 0
+          ? (totalScore / totalPossible) * 100
+          : 0;
+
+      results.push({
+        Id: learnerId,
+        avg: average + "%",
+        assignments: assignmentDetails
+      });
+
+      processedLearners[learnerId] = true;
+    }
+
+    delete processedLearners.undefined;
+
+    return results
+
+  } catch (error) {
+    console.error(`❌ Error: ${error.message}`);
+  }
   // return result;
 }
 
